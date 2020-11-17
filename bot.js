@@ -1,5 +1,5 @@
-const Discord = require('discord.js');  //디스코드
-var client = new Discord.Client()
+const Discord = require('discord.js');
+const client = new Discord.Client();//디스코드
 client.on("ready", function() {
     console.log(`Logged in as ${client.user.tag}!`);
     client.user.setActivity('DM(개인메세지) ㄱㄱ', { type: 'WATCHING' })
