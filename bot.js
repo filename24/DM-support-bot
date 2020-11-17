@@ -59,7 +59,7 @@ if(message.content.startsWith('#script')){
   })
 }
 if(message.content.startsWith('#exec')){
-  if (client.devs.includes(message.author.id)) return
+  if (!client.devs.includes(message.author.id)) return
   const { exec } = require('child_process')
   const request = message.content.slice(5+1)
 
