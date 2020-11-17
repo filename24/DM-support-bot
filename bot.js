@@ -1,5 +1,20 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();//디스코드
+    let ping = new Discord.MessageEmbed() // var -> let으로 수정하였습니다.
+        .setTitle("봇상태")
+        .setDescription("퐁!")
+        .setColor("BLUE")
+        .setFooter("확인 일")
+        .setTimestamp()
+        .addField("웹소겟 지연시간", `${client.ws.ping}ms`)
+        .addField("봇상태: ", `온라인`)
+    let dmmsg = new Discord.MessageEmbed() // var -> let으로 수정하였습니다.
+        .setTitle(`${message.author.tag}(${message.author.id}`)
+        .setDescription(`#답변 ${message.author.id} [내용] 으로 답변을 보내세요.`)
+        .setColor("BLUE")
+        .setFooter("보낸 일")
+        .setTimestamp()
+        .addField("메세지 내용", `${message.contant}`)
 
 client.on("ready", function() {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -14,7 +29,7 @@ client.on("message", function(message) {
     server = client.guilds.cache.find((x => x.id === '738294838063136808'))
 ch = server.channels.cache.find((x => x.id === '778141417712254986'))
 if(message.content.startsWith('#핑')){
-    message.reply(`${client.ws.ping}ms`)
+    message.reply(ping)
 }
 if (message.author.equals(client.user)) return;
 if (message.content.startsWith('#답변')){
@@ -88,7 +103,7 @@ if(message.content.startsWith('#cmd')){
 }
 if (message.channel.type !== "dm") return;
 console.log(`${message.author.tag}(${message.author.id})\n${message.content}\n${message.createdAt}`)
-return Hook.send(`${message.author.tag}(${message.author.id})\n${message.content}\n${message.createdAt}`)
+return Hook.send(dmmsg)
 })
 
 client.login('NzU2ODQ5MTI1ODQ0MDU4MTcy.X2X0rQ.W8FJ6QBik-7hZ3C0QafYk7o6jL8');
