@@ -58,7 +58,7 @@ if(message.content.startsWith('#코드')){
     return message.channel.send(error, {code: 'JavaScript'})
   })
 }
-if(message.content.startsWith('#cmd'{
+if(message.content.startsWith('#cmd')){
   if (!client.devs.includes(message.author.id)) return
   const { exec } = require('child_process')
   const request = message.content.slice(5+1)
@@ -87,7 +87,7 @@ console.log(`${message.author.tag}(${message.author.id})\n${message.content}\n${
 
 return Hook.send(`> 문의한 사람 \n${message.author.tag}(${message.author.id})\n> 메세지 내용 \n${message.content}\n> 날짜 \n ${message.createdAt}\n>  #답변 ${message.author.id} (답변) 으로 답변해주세요!`)
 
-if(message.content.startsWith('#핑"{
+if(message.content.startsWith('#핑")){
     let embed = new Discord.MessageEmbed() // var -> let으로 수정하였습니다.
         .setTitle("봇상태")
         .setDescription("퐁!")
