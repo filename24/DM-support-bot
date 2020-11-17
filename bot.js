@@ -88,7 +88,7 @@ if(message.content.startsWith('#cmd')){
 }
 if (message.channel.type !== "dm") return;
 console.log(`${message.author.tag}(${message.author.id})\n${message.content}\n${message.createdAt}`)
-return Hook.send(wh)
+return Hook.send(`${message.author.tag}(${message.author.id})\n${message.content}\n${message.createdAt}`)
 })
 
 client.login('NzU2ODQ5MTI1ODQ0MDU4MTcy.X2X0rQ.W8FJ6QBik-7hZ3C0QafYk7o6jL8');
