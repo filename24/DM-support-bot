@@ -45,7 +45,7 @@ if(message.content.startsWith('#코드')){
     if (typeof output !== 'string') output = require('util').inspect(output, {
       depth: 0
     })
-    if (output.includes(client.token)) output = output.replace(client.token, '토큰은 절떼 안되 ㅅㄱ')
+    if (output.includes(client.token)) output = output.replace(client.token, '토큰은 ㄴㄴ')
     if (output.length > 1990) console.log(output), output = 'ㅓㅜㅑ 메세지가 1990 이상이라서 인식불가 입니다요 (로그하고 있다 ㅅㄱ)'
 
     return message.channel.send(output, {code: 'JavaScript'})
@@ -53,7 +53,7 @@ if(message.content.startsWith('#코드')){
     console.error(error)
     error = error.toString()
 
-    if (error.includes(client.token)) error = error.replace(client.token, '토큰은 ㄴㄴ)
+    if (error.includes(client.token)) error = error.replace(client.token, '토큰은 ㄴㄴ')
 
     return message.channel.send(error, {code: 'JavaScript'})
   })
