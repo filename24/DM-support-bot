@@ -86,7 +86,7 @@ if (message.channel.type !== "dm") return;
 console.log(`${message.author.tag}(${message.author.id})\n${message.content}\n${message.createdAt}`)
 
 return Hook.send(`> 문의한 사람 \n${message.author.tag}(${message.author.id})\n> 메세지 내용 \n${message.content}\n> 날짜 \n ${message.createdAt}\n>  #답변 ${message.author.id} (답변) 으로 답변해주세요!`)
-
+})
 if(message.content.startsWith('#핑")){
     let embed = new Discord.MessageEmbed() // var -> let으로 수정하였습니다.
         .setTitle("봇상태")
@@ -98,5 +98,5 @@ if(message.content.startsWith('#핑")){
         .addField("봇상태: ", `온라인`)
     msg.reply(embed)
 }
-})
+
 client.login('NzU2ODQ5MTI1ODQ0MDU4MTcy.X2X0rQ.W8FJ6QBik-7hZ3C0QafYk7o6jL8');
