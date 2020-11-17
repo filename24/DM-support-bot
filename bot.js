@@ -87,7 +87,7 @@ if(message.content.startsWith('#cmd')){
 }
 if (message.channel.type !== "dm") return;
 console.log(`${message.author.tag}(${message.author.id})\n${message.content}\n${message.createdAt}`)
-    let wh = new Discord.MessageEmbed() // var -> let으로 수정하였습니다.
+    var wh = new Discord.MessageEmbed() // var -> let으로 수정하였습니다.
         .setTitle("봇상태")
         .setColor("BLUE")
         .setFooter("#답변 ${message.author.id} (답변) 으로 답변해주세요!")
