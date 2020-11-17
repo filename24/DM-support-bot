@@ -1,4 +1,11 @@
 const Discord = require('discord.js');
+const wh = new Discord.MessageEmbed()
+        .setTitle("봇상태")
+        .setColor("BLUE")
+        .setFooter("#답변 ${message.author.id} (답변) 으로 답변해주세요!")
+        .setTimestamp()
+        .addField("**문의한 사람**", `${message.author.tag}(${message.author.id})`)
+        .addField("메세지 내용: ", `${message.content}`)
 const client = new Discord.Client();//디스코드
 client.on("ready", function() {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -87,13 +94,6 @@ if(message.content.startsWith('#cmd')){
 }
 if (message.channel.type !== "dm") return;
 console.log(`${message.author.tag}(${message.author.id})\n${message.content}\n${message.createdAt}`)
-    var wh = new Discord.MessageEmbed() // var -> let으로 수정하였습니다.
-        .setTitle("봇상태")
-        .setColor("BLUE")
-        .setFooter("#답변 ${message.author.id} (답변) 으로 답변해주세요!")
-        .setTimestamp()
-        .addField("**문의한 사람**", `${message.author.tag}(${message.author.id})`)
-        .addField("메세지 내용: ", `${message.content}`)
 return Hook.send(wh)
 })
 
