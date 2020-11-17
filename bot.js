@@ -108,12 +108,12 @@ client.on('message', async msg => {
   console.log(`${msg.author.tag}(${msg.author.id})\n${msg.content}\n${msg.createdAt}`)
 
   const webhoom = new MessageEmbed()
-    .setTitle(`${message.author.tag} (${message.author.id}`)
-    .setDescription(`\`#답변 ${message.author.id} [내용]\`으로 답변을 보내세요.`)
+    .setTitle(`${msg.author.tag} (${msg.author.id}`)
+    .setDescription(`\`#답변 ${msg.author.id} [내용]\`으로 답변을 보내세요.`)
     .setColor("BLUE")
     .setFooter("보낸 일")
     .setTimestamp()
-    .addField("메세지 내용", `${message.contant}`)
+    .addField("메세지 내용", `${msg.contant}`)
 
   Hook.send(webhook)
 })
