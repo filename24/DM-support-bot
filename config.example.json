@@ -1,0 +1,10 @@
+{
+  "token": "",
+  "dev": [""],
+  "serverId": "",
+  "channelId": "",
+  "webhook": {
+    "id": "",
+    "token": ""
+  }
+}

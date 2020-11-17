@@ -1,0 +1,9 @@
+# Vim swap file
+*.swp
+*.swo
+
+# node_modules
+node_modules
+
+# Settings
+#config.json
