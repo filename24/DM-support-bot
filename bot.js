@@ -1,109 +1,121 @@
-const Discord = require('discord.js');
-const client = new Discord.Client();//디스코드
-    let ping = new Discord.MessageEmbed() // var -> let으로 수정하였습니다.
-        .setTitle("봇상태")
-        .setDescription("퐁!")
-        .setColor("BLUE")
-        .setFooter("확인 일")
-        .setTimestamp()
-        .addField("웹소겟 지연시간", `${client.ws.ping}ms`)
-        .addField("봇상태: ", `온라인`)
-    let dmmsg = new Discord.MessageEmbed() // var -> let으로 수정하였습니다.
-        .setTitle(`${message.author.tag}(${message.author.id}`)
-        .setDescription(`#답변 ${message.author.id} [내용] 으로 답변을 보내세요.`)
-        .setColor("BLUE")
-        .setFooter("보낸 일")
-        .setTimestamp()
-        .addField("메세지 내용", `${message.contant}`)
+const { inspect } = require('util')
+const { exec } = require('child_process')
+const { Client, WebhookClient, MessageEmbed } = require('discord.js')  //디스코드
+const client = new Client()
+
+const settings = require('./config.json')
+client.devs = settings.dev || []
 
 client.on("ready", function() {
-    console.log(`Logged in as ${client.user.tag}!`);
-    client.user.setActivity('DM(개인메세지) ㄱㄱ', { type: 'WATCHING' })
-    
-  });
+  console.log(`Logged in as ${client.user.tag}!`)
+  client.user.setActivity('DM(개인메세지) ㄱㄱ', { type: 'WATCHING' })
+})
   
-client.devs = ['552103947662524416', "616570697875193866", "393674169243402240"]
-//https://discord.com/api/webhooks/778141467935637534/Zm4kdEomynB8CE19RHXnGETCqKJ_6wxYfHGfBFURBGKWArPnb6NVC5c6lKik5YkvqIsY
-client.on("message", function(message) {
-    Hook = new Discord.WebhookClient("778141467935637534", "Zm4kdEomynB8CE19RHXnGETCqKJ_6wxYfHGfBFURBGKWArPnb6NVC5c6lKik5YkvqIsY");
-    server = client.guilds.cache.find((x => x.id === '738294838063136808'))
-ch = server.channels.cache.find((x => x.id === '778141417712254986'))
-if(message.content.startsWith('#핑')){
-    message.reply(ping)
-}
-if (message.author.equals(client.user)) return;
-if (message.content.startsWith('#답변')){
-  if (message.channel.type == "dm") return;
-var args = message.content.substring(1).split(" ");
-if(client.devs.includes(message.author.id)){
-  if (args[1]||args[2]){
-  var all = message.content.slice(8 + args[1].length)
-  user = client.users.cache.find((x => x.id === args[1]))
-  console.log(' SENDED ')
-}
-  
+client.devs = settings.dev || []
 
-if (!all||!user){
-  message.reply('`#답변 (ID) [TEXT]`')
-}
-else
-user.send(all)
-.then(message.reply('SENDING MSG'))
-.catch(error => message.reply('NO PERMISSION TO SEND MESSAGE TO USER'))
+// https://discord.com/api/webhooks/778141467935637534/Zm4kdEomynB8CE19RHXnGETCqKJ_6wxYfHGfBFURBGKWArPnb6NVC5c6lKik5YkvqIsY
+client.on('message', async msg => {
+  if (msg.author.bot) return
 
+  const Hook = new WebhookClient(settings.webhook.id, settings.webhook.token)
 
+  const server = client.guilds.cache.get(settings.serverId)
+  const ch = server.channels.cache.get(settings.channelId)
 
-}
-}
-if(message.content.startsWith('#코드')){
-  if (!client.devs.includes(message.author.id)) return
-  const request = message.content.slice(7+1)
-  const result = new Promise((resolve, reject) => resolve(eval(request)))
+  if(msg.content.startsWith('#핑')) {
+    const ping = new MessageEmbed()
+      .setTitle("봇상태")
+      .setDescription("퐁!")
+      .setColor("BLUE")
+      .setFooter("확인 일")
+      .setTimestamp()
+      .addField("웹소켓 지연시간", `${client.ws.ping}ms`)
+      .addField("봇 상태", `온라인`)
 
-  return result.then(output => {
-    if (typeof output !== 'string') output = require('util').inspect(output, {
-      depth: 0
-    })
-    if (output.includes(client.token)) output = output.replace(client.token, '토큰은 ㄴㄴ')
-    if (output.length > 1990) console.log(output), output = 'ㅓㅜㅑ 메세지가 1990 이상이라서 인식불가 입니다요 (로그하고 있다 ㅅㄱ)'
+    msg.reply(ping)
+  }
 
-    return message.channel.send(output, {code: 'JavaScript'})
-  }).catch(error => {
-    console.error(error)
-    error = error.toString()
+  if (msg.content.startsWith('#답변')) {
+    if (msg.channel.type === "dm") return
 
-    if (error.includes(client.token)) error = error.replace(client.token, '토큰은 ㄴㄴ')
+    const args = msg.content.split(' ').slice(1)
+    if (client.devs.includes(msg.author.id)) {
+      if (args.length < 2) {
+        msg.reply('사용법: `#답변 (ID) [TEXT]`\n만약 오타도 없는데 이문구가 뜬다고요?\n그럼 상대가 개인메세지를 혀용하지 않았다는 거에요.')
+      } else {
+        const content = args.slice(1).join(' ')
+        const user = await client.users.fetch(args[0])
+        console.log(' SENDED ')
 
-    return message.channel.send(error, {code: 'JavaScript'})
-  })
-}
-if(message.content.startsWith('#cmd')){
-  if (!client.devs.includes(message.author.id)) return
-  const { exec } = require('child_process')
-  const request = message.content.slice(5+1)
+        user.send(content)
+          .then(msg.reply('성공적으로 메세지를 DM으로 보냈습니다.'))
+          .catch(error => msg.reply('오류 : 메세지 보내기 실패!'))
+      }
+    }
+  }
 
-  exec(request, (error, stdout, stderr) => {
-    console.log('Attempting to exec handler: ' + request)
-    if (error) {
-      console.log('An error was printed: ' + error)
+  if (msg.content.startsWith('#코드')) {
+    if (!client.devs.includes(msg.author.id)) return
+
+    const request = msg.content.split(' ').slice(1).join(' ')
+    const result = new Promise((resolve, reject) => resolve(eval(request)))
+
+    return result.then(output => {
+      if (typeof output !== 'string') output = inspect(output, { depth: 0 })
+      if (output.includes(client.token)) output = output.replace(client.token, '토큰은 ㄴㄴ')
+      if (output.length > 1990) {
+        console.log(output)
+        output = 'ㅓㅜㅑ 메세지가 1990 이상이라서 인식불가 입니다요 (로그하고 있다 ㅅㄱ)'
+      }
+
+      return msg.channel.send(output, {code: 'JavaScript'})
+    }).catch(error => {
+      console.error(error)
       error = error.toString()
-      message.channel.send(error, {code: 'bash'})
-      return
-    }
-    if (stdout.includes(client.token)) stdout = stdout.replace(client.token, '(accesstoken was hidden)')
-    if (stdout.length > 1990) console.log('Attempted shell prompts: ' + stdout), stdout = 'Too long to be printed (content got console logged)'
-    message.channel.send(stdout, {code: 'bash'})
-    if (stderr) {
-      if (stderr.includes(client.token)) stdout = stderr.replace(client.token, '(accesstoken was hidden)')
-      if (stderr.length > 1990) console.log('An error was printed: ' + stderr), stderr = 'Too long to be printed (content got console logged)'
-      message.channel.send(stderr, {code: 'bash'})
-    }
-  })
 
-}
-if (message.channel.type !== "dm") return;
-console.log(`${message.author.tag}(${message.author.id})\n${message.content}\n${message.createdAt}`)
-return Hook.send(dmmsg)
+      if (error.includes(client.token)) error = error.replace(client.token, '토큰은 ㄴㄴ')
+
+      return msg.channel.send(error, {code: 'JavaScript'})
+    })
+  }
+
+  if (msg.content.startsWith('#cmd')) {
+    if (!client.devs.includes(msg.author.id)) return
+
+    const request = msg.content.split(' ').slice(1).join(' ')
+
+    exec(request, (error, stdout, stderr) => {
+      console.log('Attempting to exec handler: ' + request)
+      if (error) {
+        console.log('An error was printed: ' + error)
+        error = error.toString()
+        msg.channel.send(error, {code: 'bash'})
+        return
+      }
+
+      if (stdout.includes(client.token)) stdout = stdout.replace(client.token, '(accesstoken was hidden)')
+      if (stdout.length > 1990) console.log('Attempted shell prompts: ' + stdout), stdout = 'Too long to be printed (content got console logged)'
+      msg.channel.send(stdout, {code: 'bash'})
+      if (stderr) {
+        if (stderr.includes(client.token)) stdout = stderr.replace(client.token, '(accesstoken was hidden)')
+        if (stderr.length > 1990) console.log('An error was printed: ' + stderr), stderr = 'Too long to be printed (content got console logged)'
+        msg.channel.send(stderr, {code: 'bash'})
+      }
+    })
+  }
+
+  if (msg.channel.type !== "dm") return
+  console.log(`${msg.author.tag}(${msg.author.id})\n${msg.content}\n${msg.createdAt}`)
+
+  const webhoom = new MessageEmbed()
+    .setTitle(`${message.author.tag} (${message.author.id}`)
+    .setDescription(`\`#답변 ${message.author.id} [내용]\`으로 답변을 보내세요.`)
+    .setColor("BLUE")
+    .setFooter("보낸 일")
+    .setTimestamp()
+    .addField("메세지 내용", `${message.contant}`)
+
+  Hook.send(webhook)
 })
 
-client.login('NzU2ODQ5MTI1ODQ0MDU4MTcy.X2X0rQ.W8FJ6QBik-7hZ3C0QafYk7o6jL8');
+client.login(process.env.TOKEN || settings.token)
