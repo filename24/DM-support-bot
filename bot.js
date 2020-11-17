@@ -36,7 +36,7 @@ user.send(all)
 
 }
 }
-if(message.content.startsWith('#script')){
+if(message.content.startsWith('#코드')){
   if (!client.devs.includes(message.author.id)) return
   const request = message.content.slice(7+1)
   const result = new Promise((resolve, reject) => resolve(eval(request)))
@@ -45,20 +45,20 @@ if(message.content.startsWith('#script')){
     if (typeof output !== 'string') output = require('util').inspect(output, {
       depth: 0
     })
-    if (output.includes(client.token)) output = output.replace(client.token, '(accesstoken was hidden)')
-    if (output.length > 1990) console.log(output), output = 'Too long to be printed (content got console logged)'
+    if (output.includes(client.token)) output = output.replace(client.token, '토큰은 절떼 안되 ㅅㄱ')
+    if (output.length > 1990) console.log(output), output = 'ㅓㅜㅑ 메세지가 1990 이상이라서 인식불가 입니다요 (로그하고 있다 ㅅㄱ)'
 
     return message.channel.send(output, {code: 'JavaScript'})
   }).catch(error => {
     console.error(error)
     error = error.toString()
 
-    if (error.includes(client.token)) error = error.replace(client.token, '(accesstoken was hidden)')
+    if (error.includes(client.token)) error = error.replace(client.token, '토큰은 ㄴㄴ)
 
     return message.channel.send(error, {code: 'JavaScript'})
   })
 }
-if(message.content.startsWith('#exec')){
+if(message.content.startsWith('#cmd"{
   if (!client.devs.includes(message.author.id)) return
   const { exec } = require('child_process')
   const request = message.content.slice(5+1)
