@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const client = new Discord.Client();//디스코드
 const wh = new Discord.MessageEmbed()
         .setTitle("봇상태")
         .setColor("BLUE")
@@ -6,7 +7,6 @@ const wh = new Discord.MessageEmbed()
         .setTimestamp()
         .addField("**문의한 사람**", `${message.author.tag}(${message.author.id})`)
         .addField("메세지 내용: ", `${message.content}`)
-const client = new Discord.Client();//디스코드
 client.on("ready", function() {
     console.log(`Logged in as ${client.user.tag}!`);
     client.user.setActivity('DM(개인메세지) ㄱㄱ', { type: 'WATCHING' })
