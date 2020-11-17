@@ -23,7 +23,7 @@ client.on('message', async msg => {
   const ch = server.channels.cache.get(settings.channelId)
 
   if(msg.content.startsWith('#핑')) {
-    const embed = new MessageEmbed()
+    const ping = new MessageEmbed()
       .setTitle("봇상태")
       .setDescription("퐁!")
       .setColor("BLUE")
@@ -32,7 +32,7 @@ client.on('message', async msg => {
       .addField("웹소켓 지연시간", `${client.ws.ping}ms`)
       .addField("봇 상태", `온라인`)
 
-    msg.reply(embed)
+    msg.reply(ping)
   }
 
   if (msg.content.startsWith('#답변')) {
@@ -41,15 +41,15 @@ client.on('message', async msg => {
     const args = msg.content.split(' ').slice(1)
     if (client.devs.includes(msg.author.id)) {
       if (args.length < 2) {
-        msg.reply('사용법: `#답변 (ID) [TEXT]`')
+        msg.reply('사용법: `#답변 (ID) [TEXT]`\n만약 오타도 없는데 이문구가 뜬다고요?\n그럼 상대가 개인메세지를 혀용하지 않았다는 거에요.')
       } else {
         const content = args.slice(1).join(' ')
         const user = await client.users.fetch(args[0])
         console.log(' SENDED ')
 
         user.send(content)
-          .then(msg.reply('SENDING MSG'))
-          .catch(error => msg.reply('NO PERMISSION TO SEND MESSAGE TO USER'))
+          .then(msg.reply('성공적으로 메세지를 DM으로 보냈습니다.'))
+          .catch(error => msg.reply('오류 : 메세지 보내기 실패!'))
       }
     }
   }
@@ -107,7 +107,7 @@ client.on('message', async msg => {
   if (msg.channel.type !== "dm") return
   console.log(`${msg.author.tag}(${msg.author.id})\n${msg.content}\n${msg.createdAt}`)
 
-  const embed = new MessageEmbed()
+  const webhoom = new MessageEmbed()
     .setTitle(`${message.author.tag} (${message.author.id}`)
     .setDescription(`\`#답변 ${message.author.id} [내용]\`으로 답변을 보내세요.`)
     .setColor("BLUE")
@@ -115,7 +115,7 @@ client.on('message', async msg => {
     .setTimestamp()
     .addField("메세지 내용", `${message.contant}`)
 
-  Hook.send(embed)
+  Hook.send(webhook)
 })
 
 client.login(process.env.TOKEN || settings.token)
