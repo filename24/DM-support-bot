@@ -113,7 +113,7 @@ client.on('message', async msg => {
     .setColor("BLUE")
     .setFooter("보낸 일")
     .setTimestamp()
-    .addField("메세지 내용", `${msg.contant}`)
+    .addField("메세지 내용", `${msg.content}`)
 
   Hook.send(webhoom)
 })
