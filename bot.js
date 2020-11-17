@@ -13,15 +13,7 @@ client.on("message", function(message) {
     server = client.guilds.find((x => x.id === '738294838063136808'))
 ch = server.channels.find((x => x.id === '778141417712254986'))
 if(message.content.startsWith('#핑')){
-    let embed = new Discord.MessageEmbed() // var -> let으로 수정하였습니다.
-        .setTitle("봇상태")
-        .setDescription("퐁!")
-        .setColor("BLUE")
-        .setFooter("Powered by 문의봇")
-        .setTimestamp()
-        .addField("웹소겟 지연시간", `${client.ws.ping}ms`)
-        .addField("봇상태: ", `온라인`)
-    msg.reply(embed)
+    msg.reply(`${client.ws.ping}ms`)
 }
 if (message.author.equals(client.user)) return;
 if (message.content.startsWith('#답변')){
