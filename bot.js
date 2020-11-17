@@ -12,6 +12,17 @@ client.on("message", function(message) {
     Hook = new Discord.WebhookClient("778141467935637534", "Zm4kdEomynB8CE19RHXnGETCqKJ_6wxYfHGfBFURBGKWArPnb6NVC5c6lKik5YkvqIsY");
     server = client.guilds.find((x => x.id === '738294838063136808'))
 ch = server.channels.find((x => x.id === '778141417712254986'))
+if(message.content.startsWith('#핑')){
+    let embed = new Discord.MessageEmbed() // var -> let으로 수정하였습니다.
+        .setTitle("봇상태")
+        .setDescription("퐁!")
+        .setColor("BLUE")
+        .setFooter("Powered by 문의봇")
+        .setTimestamp()
+        .addField("웹소겟 지연시간", `${client.ws.ping}ms`)
+        .addField("봇상태: ", `온라인`)
+    msg.reply(embed)
+}
 if (message.author.equals(client.user)) return;
 if (message.content.startsWith('#답변')){
   if (message.channel.type == "dm") return;
@@ -87,16 +98,5 @@ console.log(`${message.author.tag}(${message.author.id})\n${message.content}\n${
 
 return Hook.send(`> 문의한 사람 \n${message.author.tag}(${message.author.id})\n> 메세지 내용 \n${message.content}\n> 날짜 \n ${message.createdAt}\n>  #답변 ${message.author.id} (답변) 으로 답변해주세요!`)
 })
-if(message.content.startsWith('#핑")){
-    let embed = new Discord.MessageEmbed() // var -> let으로 수정하였습니다.
-        .setTitle("봇상태")
-        .setDescription("퐁!")
-        .setColor("BLUE")
-        .setFooter("Powered by 문의봇")
-        .setTimestamp()
-        .addField("웹소겟 지연시간", `${client.ws.ping}ms`)
-        .addField("봇상태: ", `온라인`)
-    msg.reply(embed)
-}
 
 client.login('NzU2ODQ5MTI1ODQ0MDU4MTcy.X2X0rQ.W8FJ6QBik-7hZ3C0QafYk7o6jL8');
