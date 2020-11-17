@@ -11,10 +11,10 @@ client.devs = ['552103947662524416', "616570697875193866", "393674169243402240"]
 //https://discord.com/api/webhooks/778141467935637534/Zm4kdEomynB8CE19RHXnGETCqKJ_6wxYfHGfBFURBGKWArPnb6NVC5c6lKik5YkvqIsY
 client.on("message", function(message) {
     Hook = new Discord.WebhookClient("778141467935637534", "Zm4kdEomynB8CE19RHXnGETCqKJ_6wxYfHGfBFURBGKWArPnb6NVC5c6lKik5YkvqIsY");
-    server = client.guilds.find((x => x.id === '738294838063136808'))
-ch = server.channels.find((x => x.id === '778141417712254986'))
+    server = client.guilds.cache.find((x => x.id === '738294838063136808'))
+ch = server.channels.cache.find((x => x.id === '778141417712254986'))
 if(message.content.startsWith('#핑')){
-    message.reply(`${client.ping}ms`)
+    message.reply(`${client.ws.ping}ms`)
 }
 if (message.author.equals(client.user)) return;
 if (message.content.startsWith('#답변')){
@@ -23,7 +23,7 @@ var args = message.content.substring(1).split(" ");
 if(client.devs.includes(message.author.id)){
   if (args[1]||args[2]){
   var all = message.content.slice(8 + args[1].length)
-  user = client.users.find((x => x.id === args[1]))
+  user = client.users.cache.find((x => x.id === args[1]))
   console.log(' SENDED ')
 }
   
