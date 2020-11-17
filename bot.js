@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();//디스코드
-const wh = new Discord.MessageEmbed()
+ wh = new Discord.MessageEmbed()
         .setTitle("봇상태")
         .setColor("BLUE")
         .setFooter("#답변 ${message.author.id} (답변) 으로 답변해주세요!")
