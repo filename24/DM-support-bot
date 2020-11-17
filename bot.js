@@ -58,7 +58,7 @@ if(message.content.startsWith('#코드')){
     return message.channel.send(error, {code: 'JavaScript'})
   })
 }
-if(message.content.startsWith('#cmd"{
+if(message.content.startsWith('#cmd'{
   if (!client.devs.includes(message.author.id)) return
   const { exec } = require('child_process')
   const request = message.content.slice(5+1)
