@@ -20,7 +20,7 @@ client.on("message", function(message) {
     server = client.guilds.find((x => x.id === '738294838063136808'))
 ch = server.channels.find((x => x.id === '778141417712254986'))
 if(message.content.startsWith('#핑')){
-    message.reply(`${client.ws.ping}ms`)
+    message.reply(`${client.ping}ms`)
 }
 if (message.author.equals(client.user)) return;
 if (message.content.startsWith('#답변')){
