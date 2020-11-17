@@ -16,7 +16,7 @@ if (message.author.equals(client.user)) return;
 if (message.content.startsWith('#답변')){
   if (message.channel.type == "dm") return;
 var args = message.content.substring(1).split(" ");
-if(message.member.hasPermission('ADMINISTRATOR')){
+if(client.devs.includes(message.author.id)){
   if (args[1]||args[2]){
   var all = message.content.slice(8 + args[1].length)
   user = client.users.find((x => x.id === args[1]))
@@ -37,7 +37,7 @@ user.send(all)
 }
 }
 if(message.content.startsWith('#script')){
-  if (client.devs.includes(message.author.id)) return
+  if (!client.devs.includes(message.author.id)) return
   const request = message.content.slice(7+1)
   const result = new Promise((resolve, reject) => resolve(eval(request)))
 
