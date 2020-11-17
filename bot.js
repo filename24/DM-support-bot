@@ -115,7 +115,7 @@ client.on('message', async msg => {
     .setTimestamp()
     .addField("메세지 내용", `${msg.contant}`)
 
-  Hook.send(webhook)
+  Hook.send(webhoom)
 })
 
 client.login(process.env.TOKEN || settings.token)
