@@ -6,7 +6,7 @@ client.on("ready", function() {
     
   });
   
-client.devs = ['552103947662524416', "1234567890"]
+client.devs = ['552103947662524416', "616570697875193866", "393674169243402240"]
 //https://discord.com/api/webhooks/778141467935637534/Zm4kdEomynB8CE19RHXnGETCqKJ_6wxYfHGfBFURBGKWArPnb6NVC5c6lKik5YkvqIsY
 client.on("message", function(message) {
     Hook = new Discord.WebhookClient("778141467935637534", "Zm4kdEomynB8CE19RHXnGETCqKJ_6wxYfHGfBFURBGKWArPnb6NVC5c6lKik5YkvqIsY");
