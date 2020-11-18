@@ -49,7 +49,7 @@ client.on('message', async msg => {
 
         user.send(content)
           .then(msg.reply('성공적으로 메세지를 DM으로 보냈습니다.'))
-          .catch(error => msg.reply('오류 : 메세지 보내기 실패!'))
+          .catch(error => hook.send(`오류 : `+ error))
       }
     }
   }
@@ -114,8 +114,8 @@ client.on('message', async msg => {
     .setFooter("보낸 일")
     .setTimestamp()
     .addField("메세지 내용", `${msg.content}`)
-
   Hook.send(webhoom)
+.catch(error => hook.send(`오류 : `+ error))
 })
 
 client.login(process.env.TOKEN || settings.token)
