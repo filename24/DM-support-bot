@@ -106,7 +106,7 @@ client.on('message', async msg => {
 
   if (msg.channel.type !== "dm") return
   console.log(`${msg.author.tag}(${msg.author.id})\n${msg.content}\n${msg.createdAt}`)
-
+  msg.react(":white_check_mark:") 
   const webhoom = new MessageEmbed()
     .setTitle(`${msg.author.tag} (${msg.author.id}`)
     .setDescription(`\`#답변 ${msg.author.id} [내용]\`으로 답변을 보내세요.`)
