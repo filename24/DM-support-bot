@@ -49,7 +49,9 @@ client.on('message', async msg => {
 
         user.send(content)
           .then(msg.reply('성공적으로 메세지를 DM으로 보냈습니다.'))
-          .catch(error => Hook.send(`오류 : `+ error))
+          .catch((e)=>{
+Hook.send("에러가 발생\n"+e)
+})
       }
     }
   }
@@ -115,7 +117,9 @@ client.on('message', async msg => {
     .setTimestamp()
     .addField("메세지 내용", `${msg.content}`)
   Hook.send(webhoom)
-.catch(error => Hook.send(`오류 : `+ error))
+.catch((e)=>{
+Hook.send("에러가 발생\n"+e)
+})
 })
 
 client.login(process.env.TOKEN || settings.token)
