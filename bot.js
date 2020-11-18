@@ -8,7 +8,7 @@ client.devs = settings.dev || []
 
 client.on("ready", function() {
   console.log(`Logged in as ${client.user.tag}!`)
-  client.user.setActivity('DM(개인메세지) ㄱㄱ', { type: 'WATCHING' })
+  client.user.setActivity(settings.msg, { type: 'WATCHING' })
 })
   
 client.devs = settings.dev || []
