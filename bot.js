@@ -1,5 +1,5 @@
 const { inspect } = require('util')
-const { Client, WebhookClient, MessageEmbed } = require('discord.js')  //디스코드
+const Discord = require('discord.js')  //디스코드
 const client = new Client()
 const fs = require("fs");
 const settings = require('./config.json')
