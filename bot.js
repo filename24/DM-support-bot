@@ -1,6 +1,6 @@
 const { inspect } = require('util')
 const Discord = require('discord.js')  //디스코드
-const client = new Client()
+const client = new Discord.Client()
 const fs = require("fs");
 const settings = require('./config.json')
 
