@@ -2,6 +2,7 @@ const { inspect } = require('util')
 const Discord = require('discord.js')  //디스코드
 const client = new Discord.Client()
 const fs = require("fs");
+
 const settings = require('./config.json')
 
 client.commands = new Discord.Collection()
@@ -13,8 +14,7 @@ client.on("ready", function() {
   console.log(`Logged in as ${client.user.tag}!`)
   client.user.setActivity(settings.msg, { type: 'WATCHING' })
 })
-  
-client.devs = settings.dev || []
+
 
 fs.readdirSync("./command/").forEach(dir => {
     const Filter = fs.readdirSync(`./command/${dir}`).filter(f => f.endsWith(".js"));
