@@ -44,7 +44,8 @@ client.on("message", async msg => {
     try {
         runCommand(command, msg, args, prefix)
     } catch (e) {
-        console.error(e)
+       client.channels.cache.get("").send("에러가 발생했습니다:"+e)
+      console.error(e)
     }
 
 })
