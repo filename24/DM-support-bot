@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
+  "token_test": "d",
+  "dev": ["393674169243402240", "552103947662524416","735713553629315193","616570697875193866"],
+=======
   "token_test": "NzM1NzEzNTUzNjI5MzE1MTkz.XxkQpA.r45gjgpycSK6mrUy6Oy2ekAyDXo",
   "dev": ["393674169243402240", "552103947662524416","616570697875193866"],
+>>>>>>> df4b934abcae36a0ec0307266b7bdccabacefdfb
   "serverId": "738294838063136808",
   "channelId": "778141417712254986",
   "prefix": "#",

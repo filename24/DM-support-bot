@@ -1,8 +1,8 @@
 const Discord = require('discord.js')
 const settings = require('../../config.json')
 
-exports.run = async (client, message, args, prefix) => {
-    const ping = new MessageEmbed()
+exports.run = async (client, msg, args, prefix) => {
+    const ping = new Discord.MessageEmbed()
       .setTitle("봇상태")
       .setDescription("퐁!")
       .setColor("BLUE")

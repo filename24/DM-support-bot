@@ -1,15 +1,15 @@
 const {MessageEmbed} = require('discord.js')
-const {discord} = require('discord.js')
+const Discord = require('discord.js')
 const settings = require('../../config.json')
 
 
 
-exports.run = async (client, message, prefix) => {
-const Hook = new WebhookClient(settings.webhook.id, settings.webhook.token)
+exports.run = async (client, msg, prefix) => {
+const Hook = new Discord.WebhookClient(settings.webhook.id, settings.webhook.token)
 const server = client.guilds.cache.get(settings.serverId)
 const ch = server.channels.cache.get(settings.channelId)
-if (!client.devs.includes(message.author.id))
-    return message.reply("이 명령어는 Dev 권한이 필요합니다");
+if (!client.devs.includes(msg.author.id))
+    return msg.reply("이 명령어는 Dev 권한이 필요합니다");
     if (msg.channel.type === "dm") return
 
     const args = msg.content.split(' ').slice(1)

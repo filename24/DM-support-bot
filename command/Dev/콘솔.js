@@ -5,7 +5,7 @@ const settings = require('../../config.json')
 
 
 exports.run = async (client, msg, args, prefix) => {
-    const Hook = new WebhookClient(settings.webhook.id, settings.webhook.token)
+    const Hook = new Discord.WebhookClient(settings.webhook.id, settings.webhook.token)
     const request = msg.content.split(' ').slice(1).join(' ')
     if (!client.devs.includes(msg.author.id))
     return msg.reply("이 명령어는 Dev 권한이 필요합니다");
