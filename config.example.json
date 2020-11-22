@@ -3,6 +3,7 @@
   "dev": [""],
   "serverId": "",
   "channelId": "",
+  "prefix": "",
   "webhook": {
     "id": "",
     "token": ""
