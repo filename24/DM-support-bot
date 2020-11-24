@@ -21,7 +21,7 @@ if (!client.devs.includes(msg.author.id))
         const user = await client.users.fetch(args[0])
         console.log(' SENDED ')
 
-        user.send(content)
+        user.send(`《${msg.author.tag}》 : ` + content)
           .then(msg.reply('성공적으로 메세지를 DM으로 보냈습니다.'))
           .catch((e)=>{
 Hook.send("에러가 발생\n"+e)
