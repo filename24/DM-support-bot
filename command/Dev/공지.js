@@ -4,7 +4,6 @@ const settings = require('../../config.json')
 
 
 exports.run = async (client, message, args, prefix) => {
-const settings = require('./config.json')
 const Hook = new WebhookClient(settings.webhook.id, settings.webhook.token)
 if (!client.devs.includes(message.author.id))
     return message.reply("이 명령어는 Dev 권한이 필요합니다"); // bot.js에서 client.devs를 저장한 것을 불러와 포함하지 않으면 해당 메세지로 답변해줍시다.
