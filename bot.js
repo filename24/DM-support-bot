@@ -32,7 +32,7 @@ client.on('message', async msg => {
     .setFooter("보낸 일")
     .setTimestamp()
     .addField("메세지 내용", `${msg.content}`)
-  Hook.send("문의가 왔네요." + webhoom)
+  Hook.send(webhoom)
       .catch((e)=>{
     Hook.send("에러가 발생\n"+e)
   })
