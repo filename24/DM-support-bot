@@ -3,7 +3,6 @@ const Discord = require("discord.js")
 const client = new Discord.Client()
 const fs = require("fs");
 const settings = require('./config.json')
-const {prefix} = require("./config.json")
   
 client.commands = new Discord.Collection()
 client.aliases = new Discord.Collection()
@@ -27,7 +26,7 @@ client.on('message', async msg => {
   msg.react("✅") 
   const webhoom = new Discord.MessageEmbed()
     .setTitle(`문의자 : **${msg.author.tag}** (${msg.author.id})`)
-    .setDescription(`\`${prefix}답변 ${msg.author.id} [내용]\`으로 답변을 보내세요.`)
+    .setDescription(`\`${settings.prefix}답변 ${msg.author.id} [내용]\`으로 답변을 보내세요.`)
     .setColor("BLUE")
     .setFooter("보낸 일")
     .setTimestamp()
