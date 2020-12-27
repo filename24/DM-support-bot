@@ -14,9 +14,9 @@ const ch = server.channels.cache.get(settings.channelId)
     if (msg.channel.type === "dm") return
 
     const args = msg.content.split(' ').slice(1)
-    if (client.devs.includes(msg.author.id)) {
+    if (msg.member.hasPermission("VIEW_AUDIT_LOG")) {
       if (args.length < 2) {
-        msg.reply('사용법: `#답변 (ID) [TEXT]`')
+        msg.reply('사용법: `//답변 (ID) [TEXT]`')
       } else {
         const content = args.slice(1).join(' ')
         const user = await client.users.fetch(args[0])
@@ -36,5 +36,5 @@ exports.config = {
   aliases: ["reply", "ekqqus", "ㄱ데ㅣㅛ"],
   category: ["Dev"],
   des: ["메세지를 DM으로 보냅니다."],
-  use: ["#답변 <ID> <내용>"]
+  use: ["//답변 <ID> <내용>"]
 };
