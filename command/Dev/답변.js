@@ -8,8 +8,8 @@ exports.run = async (client, msg, prefix) => {
 const Hook = new Discord.WebhookClient(settings.webhook.id, settings.webhook.token)
 const server = client.guilds.cache.get(settings.serverId)
 const ch = server.channels.cache.get(settings.channelId)
-    if (!message.member.hasPermission("VIEW_AUDIT_LOG")) {
-        return message.reply("Missing Permissions!").then(m => m.delete(5000));
+    if (!msg.member.hasPermission("VIEW_AUDIT_LOG")) {
+        return msg.reply("Missing Permissions!").then(m => m.delete(5000));
     }
     if (msg.channel.type === "dm") return
 
