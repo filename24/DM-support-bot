@@ -8,8 +8,9 @@ exports.run = async (client, msg, prefix) => {
 const Hook = new Discord.WebhookClient(settings.webhook.id, settings.webhook.token)
 const server = client.guilds.cache.get(settings.serverId)
 const ch = server.channels.cache.get(settings.channelId)
-if (!client.devs.includes(msg.author.id))
-    return msg.reply("이 명령어는 Dev 권한이 필요합니다");
+    if (!message.member.hasPermission("VIEW_AUDIT_LOG")) {
+        return message.reply("Missing Permissions!").then(m => m.delete(5000));
+    }
     if (msg.channel.type === "dm") return
 
     const args = msg.content.split(' ').slice(1)
