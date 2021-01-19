@@ -1,3 +1,8 @@
+/*
+        Using for Discord.js, fs, Child Process
+
+*/
+console.log(`[System] Hello World`)
 const { inspect } = require('util')
 const Discord = require("discord.js")
 const client = new Discord.Client()
@@ -5,7 +10,19 @@ const fs = require("fs");
 const settings = require('./config.json')
 const { prefix } = require('./config.json')
 const restart = require('./restart.json');
+/*
+        독도 시스템
+*/
+/*
+const Dokdo = require('dokdo')
 
+const DokdoHandler = new Dokdo(client, { aliases: ['dokdo', 'dok'], prefix: '//' }) // Using Bot Application ownerID as default for owner option.
+
+client.on('message', async message => {
+  if (message.content === 'ping') return message.channel.send('Pong') // handle commands first
+  DokdoHandler.run(message) // try !dokdo
+})
+*/
 client.commands = new Discord.Collection()
 client.aliases = new Discord.Collection()
 client.devs = settings.dev || []
@@ -13,7 +30,6 @@ client.category = ['Dev', '관리', '정보']
 client.hook = settings.webhook || []
 
 client.on("ready", function() {
-  console.log(`Logged in as ${client.user.tag}!`)
   client.user.setActivity(settings.msg, { type: 'WATCHING' })
     if (restart.bool == true) {
         const embed = new Discord.MessageEmbed()
@@ -26,6 +42,7 @@ client.on("ready", function() {
                 dynamic: true
             }))
             .setTimestamp()
+        console.log(`[System] Restarted`)
         client.channels.cache.get(restart.channel).bulkDelete(1);
         client.channels.cache.get(restart.channel).send(embed);
         restart.bool = false;
@@ -34,8 +51,13 @@ client.on("ready", function() {
         fs.writeFile('./restart.json', JSON.stringify(restart), function (err) {
             if (err) console.log(err);
         });
+    console.log(`[System] Logged in as ${client.user.tag}!`)
 }
 })
+/*
+        DM Suppot
+*/
+
 
 client.on('message', async msg => {
   if (msg.author.bot) return
@@ -58,17 +80,9 @@ client.on('message', async msg => {
     Hook.send("에러가 발생\n"+e)
   })
 })
-
-fs.readdirSync("./command/").forEach(dir => {
-    const Filter = fs.readdirSync(`./command/${dir}`).filter(f => f.endsWith(".js"));
-    Filter.forEach(file => {
-        const cmd = require(`./command/${dir}/${file}`);
-        client.commands.set(cmd.config.name, cmd)
-        for (let alias of cmd.config.aliases) {
-            client.aliases.set(alias, cmd.config.name)
-        }
-    })
-})
+/*
+        Slash Command For Intert
+*/
 client.on('message',(msg)=>{
     const text = msg.content;
     if(text.startsWith('//slash')){
@@ -139,13 +153,18 @@ function callback(eventdata,message){
     client.api.interactions(eventdata.id)[eventdata.token].callback().post({data});
 }
 
-client.on('guildMemberAdd', async function (member) {
-    const welcome = member.guild.channels.cache.find("738526472377073674")
-        if (member.guild.channels.cache.some(x => (x.name.includes('👋환영합니다') || x.name.includes('입장') || x.name.includes('퇴장')) && (!x.topic || !x.topic.includes('nogreeting')))) {
-            welcome.send(new Discord.MessageEmbed()
+/*
+           멤버 입장 로그
+*/
+const channelI = '719800187404681257' // welcome channel
+const targetChannelId = '738526472377073674' // rules and info
+
+client.on('guildMemberAdd', (member) => {
+const channel = member.guild.channels.cache.get(channelI)
+channel.send(new Discord.MessageEmbed()
                 .setTitle('멤버 입장')
                 .setColor(0x00ffff)
-                .setDescription(`${member.user}님이 ${member.guild.name}에 오셨어요.\n<#763400400216260658>읽어주세요`)
+                .setDescription(`${member.user}님이 ${member.guild.name}에 오셨어요. ${member.guild.channels.cache.get(targetChannelId).toString()} 을 확인해 주세요`)
                 .setThumbnail(member.user.displayAvatarURL({
                     dynamic: true,
                     type: 'jpg',
@@ -156,13 +175,11 @@ client.on('guildMemberAdd', async function (member) {
                     type: 'jpg',
                     size: 2048
                 }))
-                .setTimestamp()
-        );
-    }
+                .setTimestamp())
 })
-client.on('guildMemberRemove', async function (member) {
-        if (member.guild.channels.cache.some(x => (x.name.includes('👋환영합니다') || x.name.includes('입장') || x.name.includes('퇴장')) && (!x.topic || !x.topic.includes('nogreeting')))){
-            welcome.send(new Discord.MessageEmbed()
+
+client.on('guildMemberRemove', (member) => {
+channel.send(new Discord.MessageEmbed()
                 .setTitle('멤버 퇴장')
                 .setColor(0xffff00)
                 .setDescription(`${member.user.tag}님이 ${member.guild.name}에서 나갔어요.`)
@@ -176,11 +193,12 @@ client.on('guildMemberRemove', async function (member) {
                     type: 'jpg',
                     size: 2048
                 }))
-                .setTimestamp()
-        );
-    }
+                .setTimestamp())
 })
 
+/*
+        명령어 핸들링 (For command Folder)
+*/
 function runCommand(command, msg, args, prefix) {
     if (client.commands.get(command) || client.aliases.get(command)) {
         const cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command))
@@ -195,11 +213,28 @@ client.on("message", async msg => {
     let command = args.shift().toLowerCase()
     try {
         runCommand(command, msg, args, prefix)
-    } catch (e) {
-       client.channels.cache.get("").send("에러가 발생했습니다:"+e)
-      console.error(e)
+    } catch (err) {
+        const embed = new Discord.MessageEmbed()
+            .setTitle('❌에러...')
+            .setColor(0xff0000)
+            .addField('에러 내용', err)
+            .addField('에러 발생 메세지 내용', message.content)
+            .addField('에러 발생 메세지 작성자', `${message.author.tag}(${message.author.id})`)
+            .setFooter(message.author.tag, message.author.avatarURL({
+                dynamic: true
+            }))
+            .setTimestamp()
+        message.channel.send(embed);
     }
-
 })
-
+fs.readdirSync("./command/").forEach(dir => {
+    const Filter = fs.readdirSync(`./command/${dir}`).filter(f => f.endsWith(".js"));
+    Filter.forEach(file => {
+        const cmd = require(`./command/${dir}/${file}`);
+        client.commands.set(cmd.config.name, cmd)
+        for (let alias of cmd.config.aliases) {
+            client.aliases.set(alias, cmd.config.name)
+        }
+    })
+})
 client.login(process.env.TOKEN || settings.token)

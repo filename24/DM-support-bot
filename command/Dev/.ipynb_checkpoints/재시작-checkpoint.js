@@ -41,9 +41,7 @@ if (!client.devs.includes(message.author.id))
                         dynamic: true
                     }))
                     .addField('진행 상황', '재시작 중')
-                    .setFooter(message.author.tag, message.author.avatarURL({
-                        dynamic: true
-                    }))
+                    .setFooter("만약 이문구가 계속 진행되면 오류가 난거에요.")
                     .setTimestamp()
                 m.edit(ymbed).then(function () {
                     process.exit();
