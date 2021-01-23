@@ -5,3 +5,4 @@ config.json
 .ipynb_checkpoints
 .env
 node_modules
+.ipynb_checkpoints
