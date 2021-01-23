@@ -1,20 +1,31 @@
 {
-  "name": "sudo-bot",
-  "version": "1.0.0",
-  "description": "Simple Sudo Bot",
+  "name": "dm-support-bot",
+  "version": "1.6.0",
+  "description": "Bot",
   "main": "bot.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "child_process": "^1.0.2",
     "discord.js": "^12.5.1",
     "dokdo": "github:wonderlandpark/dokdo",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
     "fs": "0.0.1-security",
     "randomstring": "^1.1.5"
-  }
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/team-alpha-kr/DM-support-bot.git"
+  },
+  "keywords": [
+    "teamalpha"
+  ],
+  "author": "MadeGOD",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/team-alpha-kr/DM-support-bot/issues"
+  },
+  "homepage": "https://github.com/team-alpha-kr/DM-support-bot#readme"
 }
