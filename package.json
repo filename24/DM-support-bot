@@ -10,8 +10,10 @@
   "license": "ISC",
   "dependencies": {
     "child_process": "^1.0.2",
-    "discord.js": "^12.4.1",
-    "dokdo": "^0.1.0",
+    "discord.js": "^12.5.1",
+    "dokdo": "github:wonderlandpark/dokdo",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
     "fs": "0.0.1-security",
     "randomstring": "^1.1.5"
   }

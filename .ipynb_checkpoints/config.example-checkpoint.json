@@ -1,11 +1,12 @@
 {
   "token": "",
-  "dev": [""],
+  "dev": ["", ""],
   "serverId": "",
   "channelId": "",
   "prefix": "",
   "webhook": {
     "id": "",
     "token": ""
-  }
+  },
+  "log" : ""
 }

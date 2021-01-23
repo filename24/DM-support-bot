@@ -44,6 +44,7 @@ if (!client.devs.includes(message.author.id))
                     .setFooter("만약 이문구가 계속 진행되면 오류가 난거에요.")
                     .setTimestamp()
                 m.edit(ymbed).then(function () {
+                    console.log(`[System] Restarting...`)
                     process.exit();
                 });
             });

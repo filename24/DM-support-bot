@@ -2,7 +2,6 @@
         Using for Discord.js, fs, Child Process
 
 */
-console.log(`[System] Hello World`)
 const { inspect } = require('util')
 const Discord = require("discord.js")
 const client = new Discord.Client()
@@ -10,19 +9,12 @@ const fs = require("fs");
 const settings = require('./config.json')
 const { prefix } = require('./config.json')
 const restart = require('./restart.json');
-/*
-        독도 시스템
-*/
-/*
-const Dokdo = require('dokdo')
+const dotenv = require('dotenv');
 
-const DokdoHandler = new Dokdo(client, { aliases: ['dokdo', 'dok'], prefix: '//' }) // Using Bot Application ownerID as default for owner option.
+dotenv.config({
+    path: __dirname + '.env'
+});
 
-client.on('message', async message => {
-  if (message.content === 'ping') return message.channel.send('Pong') // handle commands first
-  DokdoHandler.run(message) // try !dokdo
-})
-*/
 client.commands = new Discord.Collection()
 client.aliases = new Discord.Collection()
 client.devs = settings.dev || []
@@ -54,6 +46,7 @@ client.on("ready", function() {
     console.log(`[System] Logged in as ${client.user.tag}!`)
 }
 })
+
 /*
         DM Suppot
 */
@@ -80,6 +73,38 @@ client.on('message', async msg => {
     Hook.send("에러가 발생\n"+e)
   })
 })
+
+/*
+        Log
+*/
+client.on('message', async function (message) {
+     const server = client.guilds.cache.get(settings.serverId)
+     const log = server.channels.cache.get(settings.log)
+    
+      if (message.author.bot) return;
+      log.send(new Discord.MessageEmbed()
+                .setTitle('메세지 로그')
+                .setColor(0x00ffff)
+                .addField("이름", `${message.author.tag} <@${message.author.id}>`)
+                .addField("채널", `<#${message.channel.id}> ID : ${message.channel.id}`)
+                .addField("메세지 내용", `${message.content}`)
+                .setFooter("Log System")
+                .setTimestamp()) 
+
+})
+/*
+        독도 시스템
+*/
+
+const Dokdo = require('dokdo')
+
+const DokdoHandler = new Dokdo(client, { aliases: ['dokdo', 'dok'], prefix: '//' }) // Using Bot Application ownerID as default for owner option.
+
+client.on('message', async message => {
+  if (message.content === 'ping') return message.channel.send('Pong') // handle commands first
+  DokdoHandler.run(message) // try !dokdo
+})
+
 /*
         Slash Command For Intert
 */
@@ -111,8 +136,59 @@ const CommandData = data.data;
             callback(data,`안녕하세요!`);
         }
     }
-})
+    if(CommandData.name === 'hey'){
+        let TargetUser;
+        if(CommandData.options) TargetUser = CommandData.options.find(element => element.name == '멘션');
+        const channel = client.channels.cache.get(data.channel_id);
 
+        if(TargetUser){
+            const user = client.users.cache.get(TargetUser.value);
+            callback(data,`${user}님 일어나세요!`);
+
+        }else{
+            callback(data,`일어났군요!`);
+        }
+    }
+})
+function registerSlashCommands(guild){
+    const data = {}
+    data.name = "hey"
+    data.description = "일어나세요"
+    data.options = new Array();
+    
+    const option = {};
+    option.name = "멘션"
+    option.description = "잠에서 깨야죠 ㅎㅎ"
+    /*
+     * type list:
+     * 1 = SubCommand
+     * 2 = SubCommandGroup
+     * 3 = String
+     * 4 = Integer
+     * 5 = Boolean
+     * 6 = User
+     * 7 = Channel
+     * 8 = Role
+    */
+    option.type = 6 // 6 = User
+    option.required = false
+
+    data.options.push(option);
+
+    client.api.applications(client.user.id).guilds(guild.id).commands().post({data});
+}
+function callback(eventdata,message){
+   const data = {
+        "type": 4,
+        "data": {
+            "tts": false,
+            "content": message,
+            "embeds": [],
+            "allowed_mentions": []
+        }
+    }
+    client.api.interactions(eventdata.id)[eventdata.token].callback().post({data});
+}
 function registerSlashCommands(guild){
     const data = {}
     data.name = "hello"
