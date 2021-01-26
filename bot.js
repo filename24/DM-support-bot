@@ -46,7 +46,25 @@ client.on("ready", function() {
     console.log(`[System] Logged in as ${client.user.tag}!`)
 }
 })
+/*
+    OMG This is 욕!
+*/
+const words = require("./config.json")
+client.on('message', message => {
+    if (message.author.bot) return
 
+    let i;
+    let length = words.badwords.length;
+    for(i=0;i<=length;i++){
+        if(message.content.includes(words.badwords[i])){
+            message.delete()
+                .then(
+                    message.channel.send(`${message.author}(이)가 "${message.content}"라고 했음.`)
+                )
+            break;
+        }
+    }
+})
 /*
         DM Suppot
 */
