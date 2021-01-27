@@ -1,4 +1,5 @@
 /*
+        © 2021 Pigbot
         Using for Discord.js, fs, Child Process
 
 */
