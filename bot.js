@@ -11,6 +11,7 @@ const settings = require('./config.json')
 const { prefix } = require('./config.json')
 const restart = require('./restart.json');
 const dotenv = require('dotenv');
+const ops = require('./config.json');
 
 dotenv.config({
     path: __dirname + '.env'
@@ -111,6 +112,218 @@ client.on('message', async function (message) {
                 .setTimestamp()) 
 
 })
+client.on('messageUpdate', async (old, message) => {
+    if (!message.author || message.author.bot) return;
+    client.channels.cache.get(ops.logChannel).send({
+        embed: new Discord.MessageEmbed()
+        .setTitle('메세지 수정됨')
+        .setColor('RANDOM')
+        .addField('새 메세지', message.content ? (message.content.length > 1024 ? `${message.content.substr(0, 1021)}...` : message.content) : '내용 없음')
+        .addField('기존 메세지', old.content ? (old.content.length > 1024 ? `${old.content.substr(0, 1021)}...` : old.content) : '내용 없음')
+        .addField('메세지 링크', message.url)
+        .addField('유저', `${message.author.toString()}(${message.author.id})`)
+        .addField('채널', `${message.channel.toString()}(${message.channel.id})`)
+        .setFooter(message.author.tag, message.author.displayAvatarURL())
+        .setTimestamp()
+    });
+    if (message.member.roles.cache.has(ops.adminRole)) return;
+    if (ops.invites.some(x => message.content.includes(x)) && !ops.inviteWLChannels.includes(message.channel.id)) {
+        await message.delete();
+        message.author.send('초대 링크는 보낼 수 없어요.');
+    }
+});
+client.on('messageDelete', message => {
+    if (!message.author || message.author.bot) return;
+    client.channels.cache.get(ops.logChannel).send({
+        embed: new Discord.MessageEmbed()
+        .setTitle('메세지 삭제됨')
+        .setColor('RANDOM')
+        .addField('메세지 내용', message.content ? (message.content.length > 1024 ? `${message.content.substr(0, 1021)}...` : message.content) : '내용 없음')
+        .addField('메세지 id', message.id)
+        .addField('유저', `${message.author}(${message.author.id})`)
+        .addField('채널', `${message.channel}(${message.channel.id})`)
+        .setFooter(message.author.tag, message.author.displayAvatarURL())
+        .setTimestamp()
+    });
+});
+client.on('messageDeleteBulk', async messages => {
+    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
+        type: 'MESSAGE_BULK_DELETE'
+    });
+    client.channels.cache.get(ops.logChannel).send({
+        embed: new Discord.MessageEmbed()
+        .setTitle(`메세지 ${messages.size}개 삭제됨`)
+        .setColor('RANDOM')
+        .addField('채널', `${messages.first().channel}(${messages.first().channel.id})`)
+        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
+        .setTimestamp()
+    });
+});
+client.on('channelCreate', async channel => {
+    if (channel.type == 'dm') return;
+    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
+        type: 'CHANNEL_CREATE'
+    });
+    client.channels.cache.get(ops.logChannel).send({
+        embed: new Discord.MessageEmbed()
+        .setTitle(`채널 생성됨`)
+        .setColor('RANDOM')
+        .addField('채널', `${channel}(${channel.id})`)
+        .addField('채널 타입', ops.channels[channel.type])
+        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
+        .setTimestamp()
+    });
+});
+client.on('channelDelete', async channel => {
+    if (channel.type == 'dm') return;
+    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
+        type: 'CHANNEL_DELETE'
+    });
+    client.channels.cache.get(ops.logChannel).send({
+        embed: new Discord.MessageEmbed()
+        .setTitle(`채널 삭제됨`)
+        .setColor('RANDOM')
+        .addField('채널', `${channel.name}(${channel.id})`)
+        .addField('채널 타입', ops.channels[channel.type])
+        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
+        .setTimestamp()
+    });
+});
+client.on('guildBanAdd', async (guild, user) => {
+    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
+        type: 'MEMBER_BAN_ADD'
+    });
+    client.channels.cache.get(ops.logChannel).send({
+        embed: new Discord.MessageEmbed()
+        .setTitle(`멤버 차단됨`)
+        .setColor('RANDOM')
+        .addField('차단된 유저', `${user.tag || '알 수 없는 유저'}(${user.id})`)
+        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
+        .setTimestamp()
+    });
+});
+client.on('guildBanRemove', async (guild, user) => {
+    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
+        type: 'MEMBER_BAN_REMOVE'
+    });
+    client.channels.cache.get(ops.logChannel).send({
+        embed: new Discord.MessageEmbed()
+        .setTitle(`멤버 차단 해제됨`)
+        .setColor('RANDOM')
+        .addField('차단 해제된 유저', `${user.tag || '알 수 없는 유저'}(${user.id})`)
+        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
+        .setTimestamp()
+    });
+});
+client.on('channelUpdate', async (old, _new) => {
+    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
+        type: 'CHANNEL_UPDATE'
+    });
+    if (_new.type == 'dm') return;
+    client.channels.cache.get(ops.logChannel).send({
+        embed: new Discord.MessageEmbed()
+        .setTitle(`채널 설정 변경됨`)
+        .setColor('RANDOM')
+        .addField('채널', `${_new}(${_new.id})`)
+        .addFields(channelChanges(old, _new))
+        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
+        .setTimestamp()
+    });
+});
+client.on('roleCreate', async role => {
+    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
+        type: 'ROLE_CREATE'
+    });
+    client.channels.cache.get(ops.logChannel).send({
+        embed: new Discord.MessageEmbed()
+        .setTitle(`역할 생성됨`)
+        .setColor('RANDOM')
+        .addField('역할', `${role}(${role.id})`)
+        .addField('역할 색', role.hexColor)
+        .addField('역할 호이스팅 여부', role.hoist ? '✅' : '❌')
+        .addField('역할 멘션 가능 여부', role.mentionable ? '✅' : '❌')
+        .addField('권한', role.permissions.toArray().map(x => ops.rolePerms[x]).join('\n'))
+        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
+        .setTimestamp()
+    });
+});
+client.on('roleUpdate', async (old, _new) => {
+    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
+        type: 'ROLE_UPDATE'
+    });
+    client.channels.cache.get(ops.logChannel).send({
+        embed: new Discord.MessageEmbed()
+        .setTitle(`역할 수정됨`)
+        .setColor('RANDOM')
+        .addField('역할', `${_new}(${_new.id})`)
+        .addFields(roleChanges(old, _new))
+        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
+        .setTimestamp()
+    });
+});
+client.on('roleDelete', async role => {
+    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
+        type: 'ROLE_DELETE'
+    });
+    client.channels.cache.get(ops.logChannel).send({
+        embed: new Discord.MessageEmbed()
+        .setTitle(`역할 삭제됨`)
+        .setColor('RANDOM')
+        .addField('역할', `${role.name}(${role.id})`)
+        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
+        .setTimestamp()
+    });
+});
+client.on('guildUpdate', async (old, _new) => {
+    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
+        type: 'GUILD_UPDATE'
+    });
+    client.channels.cache.get(ops.logChannel).send({
+        embed: new Discord.MessageEmbed()
+        .setTitle(`서버 설정 변경됨`)
+        .setColor('RANDOM')
+        .addFields(guildChanges(old, _new))
+        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
+        .setTimestamp()
+    });
+});
+client.on('guildMemberRemove', async member => {
+    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
+        type: 'MEMBER_KICK'
+    });
+    if (!al || !al.entries || !al.entries.first() || !al.entries.first() || !al.entries.first().target || al.entries.first().target.id != member.user.id) return;
+    client.channels.cache.get(ops.logChannel).send({
+        embed: new Discord.MessageEmbed()
+        .setTitle(`멤버 추방됨`)
+        .setColor('RANDOM')
+        .addField('추방된 유저', `${member.user.tag}(${member.user.id})`)
+        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
+        .setTimestamp()
+    });
+});
+client.on('guildMemberUpdate', async (old, _new) => {
+    let al;
+    let al1 = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
+        type: 'MEMBER_UPDATE'
+    });
+    let al2 = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
+        type: 'MEMBER_ROLE_UPDATE'
+    });
+    if (al1.entries.first().createdAt > al2.entries.first().createdAt) {
+        al = al1;
+    } else {
+        al = al2;
+    }
+    client.channels.cache.get(ops.logChannel).send({
+        embed: new Discord.MessageEmbed()
+        .setTitle(`멤버 설정 변경됨`)
+        .setColor('RANDOM')
+        .addField('멤버', `${_new.user}(${_new.id})`)
+        .addFields(memberChanges(old, _new))
+        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
+        .setTimestamp()
+    });
+});
 /*
         독도 시스템
 */

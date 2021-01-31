@@ -4,4 +4,4 @@
 그럼 이봇을 체험해보세요.
 
 ## 업데이트를 알고싶다고요?
-그럼 [여기를 클릭하여](https://github.com/team-alpha-kr/DM-suppot-bot/releases/) 업데이트 정보 지난 업데이트 파일을 받을수있읍니다.
+그럼 [여기를 클릭하여](https://github.com/Pigbot-official/DM-suppot-bot/releases/) 업데이트 정보 지난 업데이트 파일을 받을수있읍니다.
