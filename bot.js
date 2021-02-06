@@ -1,7 +1,6 @@
 /*
-        © 2021 Pigbot
-        Using for Discord.js, fs, Child Process
-
+        Author(s) : Anhgerel, MadeGOD
+        © 2020 Team. Pigbot. All rights reserved.
 */
 const { inspect } = require('util')
 const Discord = require("discord.js")
@@ -11,7 +10,6 @@ const settings = require('./config.json')
 const { prefix } = require('./config.json')
 const restart = require('./restart.json');
 const dotenv = require('dotenv');
-const ops = require('./config.json');
 
 dotenv.config({
     path: __dirname + '.env'
@@ -24,10 +22,11 @@ client.category = ['Dev', '관리', '정보']
 client.hook = settings.webhook || []
 
 client.on("ready", function() {
+  client.user.setStatus('idle');
   client.user.setActivity(settings.msg, { type: 'WATCHING' })
     if (restart.bool == true) {
         const embed = new Discord.MessageEmbed()
-            .setTitle('재시작이 완료되었어요.')
+            .setTitle(`${client.emojis.cache.find(x => x.name == 'yes')}  재시작이 완료되었어요.`)
             .setColor(0x00ffff)
             .setThumbnail(client.user.displayAvatarURL({
                 dynamic: true
@@ -45,285 +44,65 @@ client.on("ready", function() {
         fs.writeFile('./restart.json', JSON.stringify(restart), function (err) {
             if (err) console.log(err);
         });
+    if (User["status"].jomgom === true) {
+        client.user.setStatus("dnd")
+        client.user.setActivity("점검 중..", { type: 'WATCHING' })
+    }
     console.log(`[System] Logged in as ${client.user.tag}!`)
-}
-})
-/*
-    OMG This is 욕!
-*/
-const words = require("./config.json")
-client.on('message', message => {
-    if (message.author.bot) return
-
-    let i;
-    let length = words.badwords.length;
-    for(i=0;i<=length;i++){
-        if(message.content.includes(words.badwords[i])){
-            message.delete()
-                .then(
-                    message.channel.send(`${message.author}(이)가 "${message.content}"라고 했음.`)
-                )
-            break;
-        }
     }
 })
+
 /*
         DM Suppot
 */
-
+const reload = require("self-reload-json")
+const User = new reload("./user-data.json")
 
 client.on('message', async msg => {
   if (msg.author.bot) return
   const server = client.guilds.cache.get(settings.serverId)
   const ch = server.channels.cache.get(settings.channelId)
-  
-  if (msg.channel.type !== "dm") return
-  const Hook = new Discord.WebhookClient(settings.webhook.id, settings.webhook.token)
-  console.log(`${msg.author.tag}(${msg.author.id})\n${msg.content}\n${msg.createdAt}`)
-  msg.react("✅") 
-  const webhoom = new Discord.MessageEmbed()
-    .setTitle(`문의자 : **${msg.author.tag}** (${msg.author.id})`)
-    .setDescription(`\`${settings.prefix}답변 ${msg.author.id} [내용]\`으로 답변을 보내세요.`)
-    .setColor("BLUE")
-    .setFooter("보낸 일")
-    .setTimestamp()
-    .addField("메세지 내용", `${msg.content}`)
-  Hook.send(webhoom)
-      .catch((e)=>{
-    Hook.send("에러가 발생\n"+e)
-  })
+
+  if (msg.content.startsWith(prefix)) return;
+      if (msg.channel.type == "dm") {
+      const Hook = new Discord.WebhookClient(settings.webhook.id, settings.webhook.token)
+      if (!User[msg.author.id]) {
+        User[msg.author.id] = {
+                content : true
+            }
+        User.save()
+      }
+      console.log(`[Log] Username : ${msg.author.tag}(${msg.author.id})\n[Log] Message :${msg.content}\n${msg.createdAt}`)
+      msg.react("✅") 
+      const webhoom = new Discord.MessageEmbed()
+        .setTitle(`문의자 : **${msg.author.tag}** (${msg.author.id})`)
+        .setDescription(`\`${settings.prefix}답변 ${msg.author.id} [내용]\``)
+        .setColor("BLUE")
+        .setFooter("보낸 일")
+        .setTimestamp()
+        .addField("메세지 내용", `${msg.content}`)
+      Hook.send(webhoom)
+          .catch((e)=>{
+        Hook.send("에러가 발생\n"+e)
+          })
+      if (User[msg.author.id].content === false) {
+      User[msg.author.id].content = true
+      let welcome = new Discord.MessageEmbed()
+        .setTitle(`안녕하세요 이용자님`)
+        .setDescription(`모든 DM 내용은 관리자에게 전달됩니다. \n바르고 고운말을 사용하여, 관리자를 존중해주세요.`)
+        .setColor("BLUE")
+        .setFooter("데이터 수정 완료!")
+        .setTimestamp()
+      msg.channel.send(welcome)
+          .catch((e)=>{
+        Hook.send("에러가 발생\n"+e)
+          })
+        }
+    User.save()
+    }
 })
 
-/*
-        Log
-*/
-client.on('message', async function (message) {
-     const server = client.guilds.cache.get(settings.serverId)
-     const log = server.channels.cache.get(settings.log)
-    
-      if (message.author.bot) return;
-      log.send(new Discord.MessageEmbed()
-                .setTitle('메세지 로그')
-                .setColor(0x00ffff)
-                .addField("이름", `${message.author.tag} <@${message.author.id}>`)
-                .addField("채널", `<#${message.channel.id}> ID : ${message.channel.id}`)
-                .addField("메세지 내용", `${message.content}`)
-                .setFooter("Log System")
-                .setTimestamp()) 
 
-})
-client.on('messageUpdate', async (old, message) => {
-    if (!message.author || message.author.bot) return;
-    client.channels.cache.get(ops.logChannel).send({
-        embed: new Discord.MessageEmbed()
-        .setTitle('메세지 수정됨')
-        .setColor('RANDOM')
-        .addField('새 메세지', message.content ? (message.content.length > 1024 ? `${message.content.substr(0, 1021)}...` : message.content) : '내용 없음')
-        .addField('기존 메세지', old.content ? (old.content.length > 1024 ? `${old.content.substr(0, 1021)}...` : old.content) : '내용 없음')
-        .addField('메세지 링크', message.url)
-        .addField('유저', `${message.author.toString()}(${message.author.id})`)
-        .addField('채널', `${message.channel.toString()}(${message.channel.id})`)
-        .setFooter(message.author.tag, message.author.displayAvatarURL())
-        .setTimestamp()
-    });
-    if (message.member.roles.cache.has(ops.adminRole)) return;
-    if (ops.invites.some(x => message.content.includes(x)) && !ops.inviteWLChannels.includes(message.channel.id)) {
-        await message.delete();
-        message.author.send('초대 링크는 보낼 수 없어요.');
-    }
-});
-client.on('messageDelete', message => {
-    if (!message.author || message.author.bot) return;
-    client.channels.cache.get(ops.logChannel).send({
-        embed: new Discord.MessageEmbed()
-        .setTitle('메세지 삭제됨')
-        .setColor('RANDOM')
-        .addField('메세지 내용', message.content ? (message.content.length > 1024 ? `${message.content.substr(0, 1021)}...` : message.content) : '내용 없음')
-        .addField('메세지 id', message.id)
-        .addField('유저', `${message.author}(${message.author.id})`)
-        .addField('채널', `${message.channel}(${message.channel.id})`)
-        .setFooter(message.author.tag, message.author.displayAvatarURL())
-        .setTimestamp()
-    });
-});
-client.on('messageDeleteBulk', async messages => {
-    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
-        type: 'MESSAGE_BULK_DELETE'
-    });
-    client.channels.cache.get(ops.logChannel).send({
-        embed: new Discord.MessageEmbed()
-        .setTitle(`메세지 ${messages.size}개 삭제됨`)
-        .setColor('RANDOM')
-        .addField('채널', `${messages.first().channel}(${messages.first().channel.id})`)
-        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
-        .setTimestamp()
-    });
-});
-client.on('channelCreate', async channel => {
-    if (channel.type == 'dm') return;
-    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
-        type: 'CHANNEL_CREATE'
-    });
-    client.channels.cache.get(ops.logChannel).send({
-        embed: new Discord.MessageEmbed()
-        .setTitle(`채널 생성됨`)
-        .setColor('RANDOM')
-        .addField('채널', `${channel}(${channel.id})`)
-        .addField('채널 타입', ops.channels[channel.type])
-        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
-        .setTimestamp()
-    });
-});
-client.on('channelDelete', async channel => {
-    if (channel.type == 'dm') return;
-    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
-        type: 'CHANNEL_DELETE'
-    });
-    client.channels.cache.get(ops.logChannel).send({
-        embed: new Discord.MessageEmbed()
-        .setTitle(`채널 삭제됨`)
-        .setColor('RANDOM')
-        .addField('채널', `${channel.name}(${channel.id})`)
-        .addField('채널 타입', ops.channels[channel.type])
-        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
-        .setTimestamp()
-    });
-});
-client.on('guildBanAdd', async (guild, user) => {
-    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
-        type: 'MEMBER_BAN_ADD'
-    });
-    client.channels.cache.get(ops.logChannel).send({
-        embed: new Discord.MessageEmbed()
-        .setTitle(`멤버 차단됨`)
-        .setColor('RANDOM')
-        .addField('차단된 유저', `${user.tag || '알 수 없는 유저'}(${user.id})`)
-        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
-        .setTimestamp()
-    });
-});
-client.on('guildBanRemove', async (guild, user) => {
-    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
-        type: 'MEMBER_BAN_REMOVE'
-    });
-    client.channels.cache.get(ops.logChannel).send({
-        embed: new Discord.MessageEmbed()
-        .setTitle(`멤버 차단 해제됨`)
-        .setColor('RANDOM')
-        .addField('차단 해제된 유저', `${user.tag || '알 수 없는 유저'}(${user.id})`)
-        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
-        .setTimestamp()
-    });
-});
-client.on('channelUpdate', async (old, _new) => {
-    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
-        type: 'CHANNEL_UPDATE'
-    });
-    if (_new.type == 'dm') return;
-    client.channels.cache.get(ops.logChannel).send({
-        embed: new Discord.MessageEmbed()
-        .setTitle(`채널 설정 변경됨`)
-        .setColor('RANDOM')
-        .addField('채널', `${_new}(${_new.id})`)
-        .addFields(channelChanges(old, _new))
-        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
-        .setTimestamp()
-    });
-});
-client.on('roleCreate', async role => {
-    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
-        type: 'ROLE_CREATE'
-    });
-    client.channels.cache.get(ops.logChannel).send({
-        embed: new Discord.MessageEmbed()
-        .setTitle(`역할 생성됨`)
-        .setColor('RANDOM')
-        .addField('역할', `${role}(${role.id})`)
-        .addField('역할 색', role.hexColor)
-        .addField('역할 호이스팅 여부', role.hoist ? '✅' : '❌')
-        .addField('역할 멘션 가능 여부', role.mentionable ? '✅' : '❌')
-        .addField('권한', role.permissions.toArray().map(x => ops.rolePerms[x]).join('\n'))
-        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
-        .setTimestamp()
-    });
-});
-client.on('roleUpdate', async (old, _new) => {
-    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
-        type: 'ROLE_UPDATE'
-    });
-    client.channels.cache.get(ops.logChannel).send({
-        embed: new Discord.MessageEmbed()
-        .setTitle(`역할 수정됨`)
-        .setColor('RANDOM')
-        .addField('역할', `${_new}(${_new.id})`)
-        .addFields(roleChanges(old, _new))
-        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
-        .setTimestamp()
-    });
-});
-client.on('roleDelete', async role => {
-    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
-        type: 'ROLE_DELETE'
-    });
-    client.channels.cache.get(ops.logChannel).send({
-        embed: new Discord.MessageEmbed()
-        .setTitle(`역할 삭제됨`)
-        .setColor('RANDOM')
-        .addField('역할', `${role.name}(${role.id})`)
-        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
-        .setTimestamp()
-    });
-});
-client.on('guildUpdate', async (old, _new) => {
-    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
-        type: 'GUILD_UPDATE'
-    });
-    client.channels.cache.get(ops.logChannel).send({
-        embed: new Discord.MessageEmbed()
-        .setTitle(`서버 설정 변경됨`)
-        .setColor('RANDOM')
-        .addFields(guildChanges(old, _new))
-        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
-        .setTimestamp()
-    });
-});
-client.on('guildMemberRemove', async member => {
-    let al = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
-        type: 'MEMBER_KICK'
-    });
-    if (!al || !al.entries || !al.entries.first() || !al.entries.first() || !al.entries.first().target || al.entries.first().target.id != member.user.id) return;
-    client.channels.cache.get(ops.logChannel).send({
-        embed: new Discord.MessageEmbed()
-        .setTitle(`멤버 추방됨`)
-        .setColor('RANDOM')
-        .addField('추방된 유저', `${member.user.tag}(${member.user.id})`)
-        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
-        .setTimestamp()
-    });
-});
-client.on('guildMemberUpdate', async (old, _new) => {
-    let al;
-    let al1 = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
-        type: 'MEMBER_UPDATE'
-    });
-    let al2 = await client.guilds.cache.get(ops.guildId).fetchAuditLogs({
-        type: 'MEMBER_ROLE_UPDATE'
-    });
-    if (al1.entries.first().createdAt > al2.entries.first().createdAt) {
-        al = al1;
-    } else {
-        al = al2;
-    }
-    client.channels.cache.get(ops.logChannel).send({
-        embed: new Discord.MessageEmbed()
-        .setTitle(`멤버 설정 변경됨`)
-        .setColor('RANDOM')
-        .addField('멤버', `${_new.user}(${_new.id})`)
-        .addFields(memberChanges(old, _new))
-        .setFooter(al.entries.first().executor.tag, al.entries.first().executor.displayAvatarURL())
-        .setTimestamp()
-    });
-});
 /*
         독도 시스템
 */
@@ -387,7 +166,7 @@ function registerSlashCommands(guild){
     data.name = "hey"
     data.description = "일어나세요"
     data.options = new Array();
-    
+
     const option = {};
     option.name = "멘션"
     option.description = "잠에서 깨야죠 ㅎㅎ"
@@ -423,13 +202,13 @@ function callback(eventdata,message){
 }
 function registerSlashCommands(guild){
     const data = {}
-    data.name = "hello"
-    data.description = "안녕하세요!"
+    data.name = "hey"
+    data.description = "이러날 사람을 지목해야죠"
     data.options = new Array();
-    
+
     const option = {};
     option.name = "멘션"
-    option.description = "격하게 환영해줄까요?"
+    option.description = "꺠어날 준비 되었나요?"
     /*
      * type list:
      * 1 = SubCommand
@@ -452,7 +231,7 @@ function callback(eventdata,message){
    const data = {
         "type": 4,
         "data": {
-            "tts": false,
+            "tts": true,
             "content": message,
             "embeds": [],
             "allowed_mentions": []
@@ -464,7 +243,7 @@ function callback(eventdata,message){
 /*
            멤버 입장 로그
 */
-const channelI = '719800187404681257' // welcome channel
+/*const channelI = '719800187404681257' // welcome channel
 const targetChannelId = '738526472377073674' // rules and info
 
 client.on('guildMemberAdd', (member) => {
@@ -503,11 +282,12 @@ channel.send(new Discord.MessageEmbed()
                 }))
                 .setTimestamp())
 })
-
+*/
 /*
         명령어 핸들링 (For command Folder)
 */
-function runCommand(command, msg, args, prefix) {
+function runCommand(command, msg, args, prefix, message) {
+    if (msg.channel.type == "dm") return
     if (client.commands.get(command) || client.aliases.get(command)) {
         const cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command))
         if (cmd) cmd.run(client, msg, args, prefix);
@@ -526,13 +306,13 @@ client.on("message", async msg => {
             .setTitle('❌에러...')
             .setColor(0xff0000)
             .addField('에러 내용', err)
-            .addField('에러 발생 메세지 내용', message.content)
-            .addField('에러 발생 메세지 작성자', `${message.author.tag}(${message.author.id})`)
-            .setFooter(message.author.tag, message.author.avatarURL({
+            .addField('에러 발생 메세지 내용', msg.content)
+            .addField('에러 발생 메세지 작성자', `${msg.author.tag}(${msg.author.id})`)
+            .setFooter(msg.author.tag, msg.author.avatarURL({
                 dynamic: true
             }))
             .setTimestamp()
-        message.channel.send(embed);
+        msg.channel.send(embed);
     }
 })
 fs.readdirSync("./command/").forEach(dir => {

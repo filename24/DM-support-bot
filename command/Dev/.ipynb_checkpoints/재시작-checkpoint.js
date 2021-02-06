@@ -2,8 +2,11 @@ const Discord = require('discord.js');
 const fs = require('fs');
 
 exports.run = async (client, message, args, prefix) => {
-if (!client.devs.includes(message.author.id))
-    return message.reply("이 명령어는 Dev 권한이 필요합니다");
+if (!client.devs.includes(message.author.id)) {
+    console.log(`[System] Permission denied. User ${message.author.username}`)
+    message.reply("이 명령어는 Dev 권한이 필요합니다");
+        }
+        console.log(`[System] Permission accepted. User ${message.author.username}`)
         const embed = new Discord.MessageEmbed()
             .setTitle(`${client.emojis.cache.find(x => x.name == 'loading')} 재시작 중`)
             .setColor(0xffff00)
@@ -17,6 +20,7 @@ if (!client.devs.includes(message.author.id))
             .setTimestamp()
         let m = await message.channel.send(embed);
         if (process.platform == 'linux' || client.shard) {
+            console.log(`[System] Restarting...`)
             const imbed = new Discord.MessageEmbed()
                 .setTitle(`${client.emojis.cache.find(x => x.name == 'loading')} 재시작 중`)
                 .setColor(0xffff00)
@@ -44,7 +48,6 @@ if (!client.devs.includes(message.author.id))
                     .setFooter("만약 이문구가 계속 진행되면 오류가 난거에요.")
                     .setTimestamp()
                 m.edit(ymbed).then(function () {
-                    console.log(`[System] Restarting...`)
                     process.exit();
                 });
             });

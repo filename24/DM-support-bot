@@ -9,7 +9,7 @@ const Hook = new Discord.WebhookClient(settings.webhook.id, settings.webhook.tok
 const server = client.guilds.cache.get(settings.serverId)
 const ch = server.channels.cache.get(settings.channelId)
     if (!msg.member.hasPermission("VIEW_AUDIT_LOG")) {
-        return msg.reply("Missing Permissions!").then(m => m.delete(5000));
+        return msg.reply("403 Missing Permissions!").then(m => m.delete(5000));
     }
     if (msg.channel.type === "dm") return
 

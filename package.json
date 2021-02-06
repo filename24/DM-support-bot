@@ -9,23 +9,24 @@
     "dokdo": "github:wonderlandpark/dokdo",
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security",
-    "randomstring": "^1.1.5"
+    "randomstring": "^1.1.5",
+    "self-reload-json": "^0.4.0"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ."
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/team-alpha-kr/DM-support-bot.git"
+    "url": "git+https://github.com/Pigbot-Official/DM-support-bot.git"
   },
   "keywords": [
-    "teamalpha"
+    "pigbot"
   ],
   "author": "MadeGOD",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/team-alpha-kr/DM-support-bot/issues"
+    "url": "https://github.com/Pigbot-Official/DM-support-bot/issues"
   },
-  "homepage": "https://github.com/team-alpha-kr/DM-support-bot#readme"
+  "homepage": "https://github.com/Pigbot-Official/DM-support-bot#readme"
 }
