@@ -2,9 +2,6 @@
 .idea/
 .vscode/
 config.json
-.ipynb_checkpoints
 .env
 node_modules
-.ipynb_checkpoints
-command/Dev/.ipynb_checkpointss
 user-data.example.json
